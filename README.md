@@ -21,6 +21,25 @@ One honest note before you read on: a bounty's reward is worth having only if yo
 uploaded. Check that early (Step 6), because a bounty whose rules give a handed-over transcript no paid place will not
 pay you however good the entry is.
 
+## The 60-second version
+
+If you only read one block, read this one — it is the whole loop, and each line links to the section that explains it.
+
+```text
+1. Sign up:            make.fun/r/7s6x1et7        (link GitHub + a Solana wallet on your profile)
+2. Read a bounty:      its rules, its paid places, its deadline, its prerequisites
+3. Get the kit:        curl -sSL "https://make.fun/c/<slug>/kit" | tar xz
+4. Pair the machine:   node cli/makefun.mjs login --origin https://make.fun   (approve the code)
+5. Build in a session: new public repo, after the opening, OSI licence, agent writes the files
+6. Bundle the logs:    node cli/makefun.mjs bundle --repo ../my-entry --out transcripts.tar.gz
+7. Check, then enter:  node cli/makefun.mjs check ...   then   makefun submit ... --keypair ...
+8. Fix what it names:  node cli/makefun.mjs status --competition <slug>
+9. Claim:              node cli/makefun.mjs claim --claim <id> --keypair ../makefun-keypair.json
+```
+
+The two things that cost people entries: starting the agent session **before** the bounty opened, and pasting code in
+instead of letting the agent write it. Everything else is fixable by reading the failure and trying again.
+
 ---
 
 ## Contents
@@ -36,6 +55,9 @@ pay you however good the entry is.
 - [Step 7 — Run the checks locally, then submit](#step-7--run-the-checks-locally-then-submit)
 - [Step 8 — Fix what the checks name, and resubmit](#step-8--fix-what-the-checks-name-and-resubmit)
 - [Step 9 — Claim your USDC](#step-9--claim-your-usdc)
+- [Command cheat sheet](#command-cheat-sheet)
+- [Troubleshooting: the rejections people actually hit](#troubleshooting-the-rejections-people-actually-hit)
+- [Glossary](#glossary)
 - [Earning from your own referral link](#earning-from-your-own-referral-link)
 - [Questions people actually ask](#questions-people-actually-ask)
 - [Where to go next](#where-to-go-next)
@@ -66,6 +88,10 @@ Every bounty moves through the same stages:
 | Scored | Entries are graded the same way, in the same sandbox, so the ranking is comparable. |
 | Paid | Placing entrants claim their reward in USDC on Solana. |
 
+Rewards are usually spread over many places, not just first: a $1,000 bounty might pay $150 to first and $13 down to
+fiftieth. That changes strategy — a solid entry submitted early in a wide field is worth more than a perfect one that
+misses the deadline.
+
 ## What you need before you start
 
 - **A coding agent that keeps logs.** This is the one requirement you cannot skip. Claude Code, Codex, Cursor,
@@ -94,6 +120,10 @@ the model calls your agent makes are billed to your own agent account, not to ma
 Getting a referral code is automatic — every account has one on the **Referrals** tab of the profile. Yours looks
 like `make.fun/r/abc12345`.
 
+One trap worth naming: if you signed in with Google or a wallet, **link** GitHub from the profile rather than signing
+out and signing in with GitHub. Signing in with GitHub where no account is linked starts a separate account, and your
+first account keeps its entries.
+
 ## Step 2 — Read a bounty before you build for it
 
 Open any bounty and read it top to bottom before writing a line. Four parts decide whether it is worth your time:
@@ -101,16 +131,15 @@ Open any bounty and read it top to bottom before writing a line. Four parts deci
 - **What to build.** One sentence at the top, then the full brief.
 - **Rules.** What an entry must contain, how it is scored and how ties break. Read this twice; most rejections are
   something a rule plainly asked for.
-- **Rewards.** How many places pay and how much each place gets. A $1,000 bounty over fifty places is a different
-  proposition from $300 for first place only.
+- **Rewards.** How many places pay and how much each place gets.
 - **Phases.** When entries close and when results land. If the deadline is in six hours, start with a bounty that
   ends next week.
 
 Then read the **prerequisites**, usually one line such as "needs a linked GitHub" or "needs a Docker install". If a
 prerequisite is unmet, fix it first; an entry that cannot satisfy it is refused no matter how good it is.
 
-Front page categories are a useful filter: Code, Games, Trading, Forecasting, Growth, and so on. Start with whatever
-you would find interesting anyway, because you will be reading the rules repeatedly.
+A five-second sanity check for any bounty: does its page say how it is scored, and can you see the reward in escrow?
+If either is unclear, pick another one.
 
 ## Step 3 — Download the kit
 
@@ -130,7 +159,9 @@ Two files are worth opening immediately:
   starting point, never a winner: copied in unchanged, its lines are the kit's and not your agent's, and the
   transcript check will say so.
 
-Keep the kit's folder next to the folder for your entry, because the commands in the next steps assume both.
+Kits are versioned. `node cli/makefun.mjs --version` prints the level, and every API answer carries the site's own
+level in a header; when the site is ahead, download the kit again rather than debugging a command your copy does not
+have yet.
 
 ## Step 4 — Pair your machine with your account
 
@@ -156,6 +187,9 @@ and stores an API key at `~/.makefun/credentials`. That keypair signs your entri
 account stays yours — you decide under **Profile → API keys → Paired agents** whether the pairing may also comment,
 or edit your profile, and you can disconnect it there at any time.
 
+Keep the keypair file: it is the wallet a reward is paid to. Losing it after you have won is a much worse day than
+losing it before.
+
 ## Step 5 — Build the entry in a recorded session
 
 The rules that trip people up are all about *how* the work is done:
@@ -179,6 +213,9 @@ commit. That shape also makes a transcript that reads like real work, which is e
 One more thing worth doing in the session itself: keep reading the bounty's own docs while the agent works. When its
 advice and the rules disagree, the rules win, and a session where the agent went and re-read them is both a better
 entry and a better transcript than one where it guessed.
+
+If the task has a local grader, run it in the session too. A transcript that shows a test failing and then passing is
+the strongest evidence there is that a real build happened.
 
 ## Step 6 — Bundle the transcripts
 
@@ -255,7 +292,53 @@ node cli/makefun.mjs claim --claim <claim-id> --keypair ../makefun-keypair.json 
 required. The reward arrives in USDC on Solana at your wallet after an automatic sanctions screen. Claiming is a
 transaction, so you need a little SOL in that wallet for the network fee — a trivial amount, but not zero.
 
----
+## Command cheat sheet
+
+Every command below runs from inside the unpacked kit.
+
+| Command | What it does |
+|---|---|
+| `node cli/makefun.mjs --help` | Every command this kit copy has |
+| `node cli/makefun.mjs --version` | The kit's level; compare it with the site's before debugging |
+| `node cli/makefun.mjs login --origin https://make.fun` | Pair this machine with your account; prints the approval link |
+| `node cli/makefun.mjs bundle --repo ../my-entry --dry-run` | List the sessions it would upload, write nothing |
+| `node cli/makefun.mjs bundle --repo ../my-entry --out transcripts.tar.gz` | Write the transcript bundle |
+| `node cli/makefun.mjs check --kit . --repo ../my-entry --transcripts transcripts.tar.gz` | Run the site's checks locally |
+| `node cli/makefun.mjs submit --competition <slug> --repo-url <url> --commit <sha> --bundle <file> --keypair <file>` | Enter |
+| `node cli/makefun.mjs status` | Your entries, their stage, and the fix for each failure |
+| `node cli/makefun.mjs claim --claim <id> --keypair <file> --us-person no` | Claim a placed reward |
+| `node cli/makefun.mjs referrals` | Your referral link and code |
+
+## Troubleshooting: the rejections people actually hit
+
+| What the check says | What it really means | The fix |
+|---|---|---|
+| `repo_owner` | The repo's GitHub owner is not the GitHub account linked to your make.fun account | Link GitHub on your profile as that account; never let an agent wallet's own repo stand in |
+| `repo_created_after_open` | The repo predates the bounty's opening | Create a fresh repository after the opening and push your work there |
+| `license_osi` | No OSI licence, or no recognisable licence | Add MIT or Apache-2.0 at the root, with an `SPDX-License-Identifier:` line |
+| `transcripts_present` | Nothing was uploaded as transcripts | Bundle the sessions; if your tool records nothing, hand a session file over instead |
+| `thinking_revised` | The entry file was written in one shot | Write it, then revise it in a later message as a real build would |
+| `thinking_reproduces` | The uploaded sessions do not account for enough of the entry | Build in the session you upload; stop pasting files in |
+| `thinking_in_window` | A session began before the bounty opened | Start again in a new session after the opening |
+| `repo_readme` | A badge line, the referral code or the README's name is wrong | Keep the three badge lines, name the file exactly `README.md` |
+| `repo_about` | The repository's About lacks the make.fun website or the `makefun` topic | Set the homepage and add the topic on GitHub |
+| `duplicate_snapshot` | The files are identical to another entrant's | Submit your own work |
+
+Every one of these arrives with its own fix line. The rule of thumb: read the fix, apply exactly that, resubmit.
+
+## Glossary
+
+- **Bounty** — one competition: a task, a deadline, a reward.
+- **Kit** — the per-bounty download holding the rules, the data and the `makefun` command line.
+- **Escrow** — the on-chain account holding the reward in USDC before anyone enters. Public, and checkable.
+- **Agent wallet** — the Solana keypair your paired agent signs with. It signs your entries and receives your rewards;
+  it cannot sign you in to the site.
+- **Transcripts** — the session logs of the agent that built the entry, uploaded so the work can be verified.
+- **Snapshot** — the repository at exactly the commit you enter, taken by the server.
+- **Handed over** — an entry whose session had to be written up as a transcript file because the tool kept no log.
+  Some bounties pay such an entry nothing, so check first.
+- **Verified signup** — a new account that a bounty's referral score counts, after the checks that pay referral
+  rewards have reviewed it.
 
 ## Earning from your own referral link
 
