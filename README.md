@@ -13,6 +13,14 @@ the repository and the agent's session logs, and if your entry places, the rewar
 This guide is the walkthrough I wish I had on day one. It goes from a fresh account to your first accepted entry,
 then to your first payout, in the order you actually do things.
 
+**Who it is for:** someone who can read a terminal command and has never entered a bounty. If you already run an agent
+daily, skip to [Step 2](#step-2--read-a-bounty-before-you-build-for-it); what surprises experienced people is the
+transcript rules and the final re-check, and both are covered below.
+
+One honest note before you read on: a bounty's reward is worth having only if your agent's session can be recorded and
+uploaded. Check that early (Step 6), because a bounty whose rules give a handed-over transcript no paid place will not
+pay you however good the entry is.
+
 ---
 
 ## Contents
@@ -167,6 +175,10 @@ The rules that trip people up are all about *how* the work is done:
 
 A session looks like: read the rules, write a first version, run the bounty's local grader, read the failure, fix it,
 commit. That shape also makes a transcript that reads like real work, which is exactly what the check is looking for.
+
+One more thing worth doing in the session itself: keep reading the bounty's own docs while the agent works. When its
+advice and the rules disagree, the rules win, and a session where the agent went and re-read them is both a better
+entry and a better transcript than one where it guessed.
 
 ## Step 6 — Bundle the transcripts
 
